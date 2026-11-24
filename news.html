@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=1024, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>TUESDAY 24 NOVEMBER 2026 — The World in 40 Stories</title>
+  <style>
+    /* Exact horizontal budget: 24 + (4 × 235) + (3 × 12) + 24 = 1024px.
+       Exact vertical budget: 16 + 18 + 160 + 38 + 720 + 24 + (4 × 9) + 12 = 1024px.
+       Each column: 26px heading + 10 × 65.4px cards + 10 × 4px gaps = 720px.
+       Cards have 218px of content width; no text truncation or line clamping. */
+    *, *::before, *::after { box-sizing: border-box; }
+    :root {
+      --paper: #f4f0e5;
+      --ink: #19211f;
+      --red: #ae3025;
+      --rule: #d4cdbd;
+    }
+    html, body {
+      margin: 0;
+      width: 1024px;
+      height: 1024px;
+      overflow: hidden;
+      background: var(--paper);
+      color: var(--ink);
+    }
+    body {
+      font-family: "DejaVu Sans Condensed", "Arial Narrow", Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      print-color-adjust: exact;
+      -webkit-print-color-adjust: exact;
+    }
+    .page {
+      width: 1024px;
+      height: 1024px;
+      padding: 16px 24px 12px;
+      display: grid;
+      grid-template-rows: 18px 160px 38px minmax(0, 1fr) 24px;
+      gap: 9px;
+      border-top: 0;
+    }
+    .topline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 3px solid var(--ink);
+      padding-top: 4px;
+      font-size: 9px;
+      font-weight: 700;
+      line-height: 11px;
+      letter-spacing: 1.3px;
+      white-space: nowrap;
+    }
+    .topline strong { color: var(--red); }
+    .masthead {
+      display: grid;
+      grid-template-rows: 64px 92px;
+      border-bottom: 4px solid var(--ink);
+    }
+    h1 { display: contents; }
+    .weekday-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .weekday {
+      font-size: 56px;
+      font-weight: 900;
+      line-height: 64px;
+      letter-spacing: -2.7px;
+    }
+    .edition {
+      border-left: 3px solid var(--red);
+      padding-left: 12px;
+      font-size: 11px;
+      line-height: 15px;
+      letter-spacing: 1.5px;
+      font-weight: 700;
+      text-align: left;
+    }
+    .edition b { display: block; color: var(--red); font-size: 20px; line-height: 23px; letter-spacing: -.5px; }
+    .date {
+      display: block;
+      font-size: 78px;
+      font-weight: 900;
+      line-height: 90px;
+      letter-spacing: -2.5px;
+      white-space: nowrap;
+    }
+    .summary {
+      display: flex;
+      align-items: center;
+      background: var(--ink);
+      color: #fffaf0;
+      white-space: nowrap;
+    }
+    .summary b {
+      display: grid;
+      place-items: center;
+      flex: 0 0 112px;
+      height: 38px;
+      background: var(--red);
+      font-size: 11px;
+      letter-spacing: .8px;
+    }
+    .summary p { margin: 0; padding: 0 12px; font-size: 11.7px; font-weight: 600; line-height: 18px; }
+    .news-grid {
+      min-width: 0;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .column {
+      --accent: #ae3025;
+      --tint: #ece2d5;
+      min-width: 0;
+      min-height: 0;
+      display: grid;
+      grid-template-rows: 26px repeat(10, minmax(0, 1fr));
+      gap: 4px;
+    }
+    .war { --accent: #7e352d; --tint: #eee6dc; }
+    .money { --accent: #263d4b; --tint: #e5e8e5; }
+    .world { --accent: #28665b; --tint: #e3e9df; }
+    .column-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 0;
+      padding: 0 8px;
+      background: var(--accent);
+      color: #fffaf0;
+      font-size: 11.4px;
+      font-weight: 800;
+      line-height: 18px;
+      letter-spacing: .7px;
+      white-space: nowrap;
+    }
+    .column-title span { font-size: 8px; letter-spacing: .7px; opacity: .8; }
+    .story {
+      min-width: 0;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 5px 7px;
+      border-left: 3px solid var(--accent);
+      border-bottom: 1px solid var(--rule);
+      background: #fcfaf4;
+    }
+    .story:nth-of-type(even) { background: var(--tint); }
+    .meta {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      height: 16px;
+      flex: 0 0 16px;
+      font-size: 8.2px;
+      line-height: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .number { color: var(--accent); font-size: 14px; line-height: 16px; font-weight: 900; letter-spacing: -.6px; }
+    .tag { padding: 0 3px; background: var(--tint); color: var(--accent); font-size: 7.3px; letter-spacing: .2px; line-height: 12px; }
+    time { font-variant-numeric: tabular-nums; }
+    .source { margin-left: auto; color: #62665d; font-size: 8px; }
+    .story h3 {
+      margin: 2px 0 1px;
+      font-size: 12.7px;
+      font-weight: 800;
+      line-height: 18px;
+      letter-spacing: -.35px;
+      white-space: nowrap;
+    }
+    .detail {
+      margin: 0;
+      color: #4d534a;
+      font-size: 8.75px;
+      font-weight: 500;
+      line-height: 13px;
+      letter-spacing: -.12px;
+      white-space: nowrap;
+    }
+    .story.lead { background: var(--accent); border-bottom-color: var(--accent); color: #fffaf0; }
+    .lead .number, .lead .source, .lead .detail { color: #fff5e7; }
+    .lead .tag { background: #fff5e7; }
+    footer {
+      border-top: 2px solid var(--ink);
+      padding-top: 5px;
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 17px;
+      letter-spacing: .5px;
+      text-align: center;
+    }
+    @page { size: 1024px 1024px; margin: 0; }
+  </style>
+</head>
+<body>
+  <main class="page" aria-label="World news digest for 24 November 2026">
+    <div class="topline"><strong>THE WORLD / ONE DAY / ONE PAGE</strong><span>40 DISPATCHES · ALL TIMES UTC · * ADDED-ITEM DESK TIME</span></div>
+    <header class="masthead">
+      <h1><span class="weekday-row"><span class="weekday">TUESDAY</span><span class="edition" aria-hidden="true">THE GLOBAL DAILY FILE<b>WORLD NEWS</b></span></span><span class="date">24 NOVEMBER 2026</span></h1>
+    </header>
+    <div class="summary"><b>DAY SUMMARY</b><p>Hormuz burns; Riyadh hit; Gaza toll climbs; Ukraine warns; oil rises as AI stocks and crypto slide.</p></div>
+
+    <!-- Stories 01–29 and 31–35 follow the supplied editorial brief.
+         Stories 30 and 36–40 add sourced science, technology and weather context.
+         Their starred UTC times are edition desk slots, not asserted publication times.
+         Earlier source dates are explicitly noted in the visible card details. -->
+    <div class="news-grid">
+      <section class="column gulf" aria-labelledby="gulf-title">
+        <h2 class="column-title" id="gulf-title">GULF &amp; IRAN <span>01—10</span></h2>
+        <article class="story lead">
+          <div class="meta"><span class="number">01</span><span class="tag">GULF</span><time datetime="2026-11-24T03:10:00Z">03:10Z</time><span class="source">AP / Anadolu</span></div>
+          <h3>3 tankers hit mines in Hormuz</h3>
+          <p class="detail">IRGC: eastern strait; fires despite US air cover.</p>
+        </article>
+        <article class="story">
+          <div class="meta"><span class="number">02</span><span class="tag">GULF</span><time datetime="2026-11-24T04:00:00Z">04:00Z</time><span class="source">AP</span></div>
+          <h3>Iran warns ships over routes</h3>
+          <p class="detail">No “unauthorized routes”; blast footage promised.</p>
+        </article>
+        <article class="story">
+          <div class="meta"><span class="number">03</span><span class="tag">GULF</span><time datetime="2026-11-24T09:00:00Z">09:00Z</time><span class="source">AP</span></div>
+          <h3>Iran sets 7 terms for US talks</h3>
+          <p class="detail">Tehran rules out talks until conditions are met.</p>
+        </article>
+        <article class="story">
+          <div class="meta"><span class="number">04</span><span class="tag">GULF</span><time datetime="2026-11-24T10:30:00Z">10:30Z</time><span class="source">Reuters</span></div>
+          <h3>US widens Iran sanctions</h3>
+          <p class="detail">Treasury targets network after tanker mine blasts.</p>
+        </article>
+        <article class="story">
+          <div class="meta"><span class="number">05</span><span class="tag">GULF</span><time datetime="2026-11-24T12:00:00Z">12:00Z</time><span class="source">CNBC</span></div>
+          <h3>Oil settles $2 higher</h3>
+          <p class="detail">Traders weigh continuing Hormuz ship attacks.</p>
+        </article>
+        <article class="story">
+          <div class="meta"><span class="number">06</span><span class="tag">WAR</span><time datetime="2026-11-24T07:45:00Z">07:45Z</time><span class="source">Al Jazeera</span></div>
+          <h3>Houthi attack hits Riyadh tower</h3>
+          <p class="detail">11 hurt; PIF Tower struck again within days.</p>
+        </article>
+        <article class="story">
+          <div class="meta"><span class="number">07</span><span class="tag">WAR</span><time datetime="2026-11-24T08:30:00Z">08:30Z</time><span class="source">Reuters</span></div>
+          <h3>Saudi coalition vows response</h3>
+          <p class="detail">Confirms attack on Riyadh’s business district.</p>
+        </article>
+        <article class="story">
+          <div class="meta"><span class="number">08</span><span class="tag">GULF</span><time datetime="2026-11-24T06:00:00Z">06:00Z</time><span class="source">Reuters</span></div>
+          <h3>Hormuz fires: 2 injured</h3>
+          <p class="detail">Tankers burn; insurers lift war-risk premiums.</p>
+        </article>
+        <article class="story">
+          <div class="meta"><span class="number">09</span><span class="tag">GULF</span><time datetime="2026-11-24T11:00:00Z">11:00Z</time><span class="source">AP</span></div>
+          <h3>Qatar: attacks unacceptable</h3>
+          <p class="detail">Iran protests joint Qatar–Germany statement.</p>
+        </article>
+        <article class="story">
+          <div class="meta"><span class="number">10</span><span class="tag">GULF</span><time datetime="2026-11-24T11:45:00Z">11:45Z</time><span class="source">Al Jazeera</span></div>
+          <h3>Iran tightens Hormuz closure</h3>
+          <p class="detail">“Further day by day”; Qatar seeks peace talks.</p>
+        </article>
+      </section>
+
+      <section class="column war" aria-labelledby="war-title">
+        <h2 class="column-title" id="war-title">GAZA &amp; UKRAINE <span>11—20</span></h2>
+        <article class="story lead">
+          <div class="meta"><span class="number">11</span><span class="tag">WAR</span><time datetime="2026-11-24T05:00:00Z">05:00Z</time><span class="source">Anadolu</span></div>
+          <h3>Al-Mawasi police post struck</h3>
+          <p class="detail">Israeli drone: 3 dead, 5 hurt in Khan Younis.</p>
+        </article>
+        <article class="story">
+          <div class="meta"><span class="number">12</span><span class="tag">WAR</span><time datetime="2026-11-24T06:20:00Z">06:20Z</time><span class="source">Anadolu</span></div>
+          <h3>5 Palestinians killed in Gaza</h3>
+          <p class="detail">23 Nov Israeli strikes; Ansar junction car hit.</p>
+        </article>
+        <article class="story">
+          <div class="meta"><span class="number">13</span><span class="tag">WAR</span><time datetime="2026-11-24T11:15:00Z">11:15Z</time><span class="source">Anadolu</span></div>
+          <h3>Gaza truce-violation toll: 1,675</h3>
+          <p class="detail">Ministry: Palestinians killed since 10 Oct 2025.</p>
+        </article>
+        <article class="story">
+          <div class="meta"><span class="number">14</span><span class="tag">WAR</span><time datetime="2026-11-24T13:00:00Z">13:00Z</time><span class="source">Anadolu</span></div>
+          <h3>Xi opposes “land-grabbing”</h3>
+          <p class="detail">Palestinians targeted amid West Bank attacks.</p>
+        </article>
+        <article class="story">
+          <div class="meta"><span class="number">15</span><span class="tag">UKRAINE</span><time datetime="2026-11-24T01:30:00Z">01:30Z</time><span class="source">Reuters</span></div>
+          <h3>Putin: retaliation “inevitable”</h3>
+          <p class="detail">After Ukraine hits Russian oil plants.</p>
+        </article>
+        <article class="story">
+          <div class="meta"><span class="number">16</span><span class="tag">UKRAINE</span><time datetime="2026-11-24T03:50:00Z">03:50Z</time><span class="source">UN / Anadolu</span></div>
+          <h3>Russia, Ukraine clash at UN</h3>
+          <p class="detail">Security Council: Black Sea ships, energy strikes.</p>
+        </article>
+        <article class="story">
+          <div class="meta"><span class="number">17</span><span class="tag">UKRAINE</span><time datetime="2026-11-24T04:40:00Z">04:40Z</time><span class="source">Anadolu</span></div>
+          <h3>Moscow rules out grain deal</h3>
+          <p class="detail">Calls it Ukrainian food for Western weapons.</p>
+        </article>
+        <article class="story">
+          <div class="meta"><span class="number">18</span><span class="tag">UKRAINE</span><time datetime="2026-11-24T08:10:00Z">08:10Z</time><span class="source">UN</span></div>
+          <h3>Moscow: 200+ ships targeted</h3>
+          <p class="detail">By Ukraine since July; 12 sailors killed or hurt.</p>
+        </article>
+        <article class="story">
+          <div class="meta"><span class="number">19</span><span class="tag">UKRAINE</span><time datetime="2026-11-24T09:30:00Z">09:30Z</time><span class="source">Reuters</span></div>
+          <h3>Zelensky urges missile supplies</h3>
+          <p class="detail">Warns of new Russian attacks; seeks air defenses.</p>
+        </article>
+        <article class="story">
+          <div class="meta"><span class="number">20</span><span class="tag">UKRAINE</span><time datetime="2026-11-24T10:00:00Z">10:00Z</time><span class="source">Bloomberg</span></div>
+          <h3>Drones slash Russian refining</h3>
+          <p class="detail">Ukraine’s drones cut Russian refining capacity.</p>
+        </article>
+      </section>
+
+      <section class="column money" aria-labelledby="markets-title">
+        <h2 class="column-title" id="markets-title">MARKETS &amp; POWER <span>21—30</span></h2>
+        <article class="story lead">
+          <div class="meta"><span class="number">21</span><span class="tag">MARKETS</span><time datetime="2026-11-24T15:00:00Z">15:00Z</time><span class="source">AP / Yahoo</span></div>
+          <h3>S&amp;P 500 −0.5%: eighth loss</h3>
+          <p class="detail">AI stocks fizzle as Nvidia’s rally reverses.</p>
+        </article>
+        <article class="story">
+          <div class="meta"><span class="number">22</span><span class="tag">MARKETS</span><time datetime="2026-11-24T15:10:00Z">15:10Z</time><span class="source">Yahoo</span></div>
+          <h3>Dow closes above 50,000</h3>
+          <p class="detail">Second straight record; Nasdaq falls about 1.5%.</p>
+        </article>
+        <article class="story">
+          <div class="meta"><span class="number">23</span><span class="tag">MARKETS</span><time datetime="2026-11-24T16:00:00Z">16:00Z</time><span class="source">Fortune</span></div>
+          <h3>Bitcoin breaks below $60,000</h3>
+          <p class="detail">Down ~5%; ETF outflows hit record $4.71bn.</p>
+        </article>
+        <article class="story">
+          <div class="meta"><span class="number">24</span><span class="tag">MARKETS</span><time datetime="2026-11-24T16:30:00Z">16:30Z</time><span class="source">CNBC</span></div>
+          <h3>Huang return: a reflex rally</h3>
+          <p class="detail">Analysts: Nvidia’s bounce “resolved nothing.”</p>
+        </article>
+        <article class="story">
+          <div class="meta"><span class="number">25</span><span class="tag">MARKETS</span><time datetime="2026-11-24T09:30:00Z">09:30Z</time><span class="source">Türkiye</span></div>
+          <h3>Dollar firms; BIST 100 −1.25%</h3>
+          <p class="detail">Turkish stocks retreat; dollar at 50.62 lira.</p>
+        </article>
+        <article class="story">
+          <div class="meta"><span class="number">26</span><span class="tag">MARKETS</span><time datetime="2026-11-24T09:32:00Z">09:32Z</time><span class="source">Reuters</span></div>
+          <h3>Brent holds Hormuz premium</h3>
+          <p class="detail">Oil rises as shipping disruption underpins prices.</p>
+        </article>
+        <article class="story">
+          <div class="meta"><span class="number">27</span><span class="tag">AMERICAS</span><time datetime="2026-11-24T14:30:00Z">14:30Z</time><span class="source">Anadolu</span></div>
+          <h3>Vance briefs on Iran escalation</h3>
+          <p class="detail">US VP, secretary of state speak in Washington.</p>
+        </article>
+        <article class="story">
+          <div class="meta"><span class="number">28</span><span class="tag">AMERICAS</span><time datetime="2026-11-24T17:00:00Z">17:00Z</time><span class="source">Yahoo Finance</span></div>
+          <h3>Anthropic sets Nasdaq records</h3>
+          <p class="detail">Standout session as broader AI names whipsaw.</p>
+        </article>
+        <article class="story">
+          <div class="meta"><span class="number">29</span><span class="tag">UKRAINE</span><time datetime="2026-11-24T14:00:00Z">14:00Z</time><span class="source">Euronews</span></div>
+          <h3>Italy raises Libya ship attacks</h3>
+          <p class="detail">Rome voices concerns directly to Ukraine.</p>
+        </article>
+        <article class="story" data-source="https://www.nasa.gov/directorates/rtmd/nasa-seeks-partners-to-design-first-nuclear-reactor-for-the-moon/">
+          <div class="meta"><span class="number">30</span><span class="tag">TECH</span><time datetime="2026-11-24T17:20:00Z">17:20Z*</time><span class="source">NASA</span></div>
+          <h3>NASA seeks Moon reactor bids</h3>
+          <p class="detail">23 Nov call: 20kW unit; proposals due 21 Dec.</p>
+        </article>
+      </section>
+
+      <section class="column world" aria-labelledby="world-title">
+        <h2 class="column-title" id="world-title">WORLD &amp; SCIENCE <span>31—40</span></h2>
+        <article class="story lead">
+          <div class="meta"><span class="number">31</span><span class="tag">EU</span><time datetime="2026-11-24T07:00:00Z">07:00Z</time><span class="source">Anadolu</span></div>
+          <h3>Serbia school shooting: 2 hurt</h3>
+          <p class="detail">Kragujevac tech school; teen rifleman arrested.</p>
+        </article>
+        <article class="story">
+          <div class="meta"><span class="number">32</span><span class="tag">EU</span><time datetime="2026-11-24T08:45:00Z">08:45Z</time><span class="source">Euronews</span></div>
+          <h3>“Cheaper to fund Ukraine”</h3>
+          <p class="detail">Ukraine economist warns Europe against aid cuts.</p>
+        </article>
+        <article class="story">
+          <div class="meta"><span class="number">33</span><span class="tag">EU</span><time datetime="2026-11-24T12:30:00Z">12:30Z</time><span class="source">Politico EU</span></div>
+          <h3>EU weighs energy emergency</h3>
+          <p class="detail">Ministers assess supply squeeze as Hormuz shuts.</p>
+        </article>
+        <article class="story">
+          <div class="meta"><span class="number">34</span><span class="tag">AFRICA</span><time datetime="2026-11-24T09:00:00Z">09:00Z</time><span class="source">ESPN</span></div>
+          <h3>Senegal regains AFCON title</h3>
+          <p class="detail">CAS restores 2025 final: Senegal 1–0 Morocco.</p>
+        </article>
+        <article class="story">
+          <div class="meta"><span class="number">35</span><span class="tag">AFRICA</span><time datetime="2026-11-24T10:15:00Z">10:15Z</time><span class="source">Guardian</span></div>
+          <h3>CAF restores Senegal title</h3>
+          <p class="detail">Title returned 57 days after final was voided.</p>
+        </article>
+        <article class="story" data-source="https://science.nasa.gov/earth/earth-observatory/eruption-extends-iwo-jimas-beach/">
+          <div class="meta"><span class="number">36</span><span class="tag">ASIA</span><time datetime="2026-11-24T17:40:00Z">17:40Z*</time><span class="source">NASA</span></div>
+          <h3>Eruption grows Iwo Jima beach</h3>
+          <p class="detail">Satellite view: Japan’s volcanic coast expands.</p>
+        </article>
+        <article class="story" data-source="https://apod.nasa.gov/apod/ap261124.html">
+          <div class="meta"><span class="number">37</span><span class="tag">SCIENCE</span><time datetime="2026-11-24T18:00:00Z">18:00Z*</time><span class="source">NASA</span></div>
+          <h3>Galaxies collide in daily image</h3>
+          <p class="detail">24 Nov APOD: NGC 7771 group in Pegasus.</p>
+        </article>
+        <article class="story" data-source="https://science.nasa.gov/missions/webb/nasas-webb-shows-how-supernova-dust-chronicles-star-evolution/">
+          <div class="meta"><span class="number">38</span><span class="tag">SCIENCE</span><time datetime="2026-11-24T18:20:00Z">18:20Z*</time><span class="source">NASA</span></div>
+          <h3>Webb reads supernova dust</h3>
+          <p class="detail">23 Nov: Cassiopeia A dust traces stellar evolution.</p>
+        </article>
+        <article class="story" data-source="https://science.nasa.gov/solar-system/skywatching/whats-up-november-2026-skywatching-tips-from-nasa/">
+          <div class="meta"><span class="number">39</span><span class="tag">SCIENCE</span><time datetime="2026-11-24T18:40:00Z">18:40Z*</time><span class="source">NASA</span></div>
+          <h3>November supermoon rises</h3>
+          <p class="detail">24 Nov full Moon: first of three supermoons.</p>
+        </article>
+        <article class="story" data-source="https://oceanservice.noaa.gov/facts/perigean-spring-tide.html" data-context="Editorial inference from the 24 November supermoon and NOAA tide guidance; no specific local warning asserted.">
+          <div class="meta"><span class="number">40</span><span class="tag">WEATHER</span><time datetime="2026-11-24T19:00:00Z">19:00Z*</time><span class="source">NOAA / NASA</span></div>
+          <h3>Supermoon brings higher tides</h3>
+          <p class="detail">Near-Earth full Moons can raise coastal high tides.</p>
+        </article>
+      </section>
+    </div>
+    <footer>40 stories. One day. 24 November 2026.</footer>
+  </main>
+</body>
+</html>
